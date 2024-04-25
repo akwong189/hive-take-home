@@ -15,7 +15,7 @@ export default function useOutsideClick(callback) {
             document.removeEventListener('click', handleClickEvent);
         }
 
-    }, [ref]);
+    }, [ref, callback]);
 
     return ref;
 }
