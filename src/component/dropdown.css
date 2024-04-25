@@ -1,0 +1,31 @@
+.drop-context {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    border: solid;
+    justify-content: center;
+    align-items: center;
+}
+
+.drop-menu {
+    position: absolute;
+    border-style: solid;
+    width: 300px;
+}
+
+.drop-down {
+    list-style: none;
+    height: 200px;
+    overflow: auto;
+    border-style: solid;
+    padding: 0;
+    list-style-position: inside;
+}
+
+.drop-down li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #cccccc;
+    text-align: left;
+    background: #fbf6f6;
+    cursor: pointer;
+}
