@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div className="App">
-      <Dropdown options={options} style={{
+      <Dropdown options={options}  style={{
         display: 'flex',
         justifyContent: 'center',
         margin: "10px"

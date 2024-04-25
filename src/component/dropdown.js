@@ -4,12 +4,13 @@ import "./dropdown.css"
 /**
  * JSX Component for a dropdown menu
  * @param {object} props
- * @param {list} props.options options to display to be selected
+ * @param {array} props.options options to display to be selected
+ * @param {string} props.tag tag for the dropdown memu
  * @returns
  */
 export default function Dropdown(props) {
     const [openMenu, setOpenMenu] = useState(false);
-    const [selectedOptions, setSelectedOptions] = useState(["test1"]);
+    const [selectedOptions, setSelectedOptions] = useState([]);
     const [listOptions, setListOptions] = useState([]);
 
     const onCheck = (itemId, all = false) => {
@@ -42,7 +43,7 @@ export default function Dropdown(props) {
     return (
         <div style={props?.style}>
             <div className="drop-down">
-                <DropdownContext isOpen={openMenu} selectedOptions={selectedOptions} onClick={onMenuClick}/>
+                <DropdownContext tag={props.tag} isOpen={openMenu} selectedOptions={selectedOptions} onClick={onMenuClick} />
                 {
                     openMenu ? <DropdownMenu multi={true} options={listOptions} onCheck={onCheck} /> : null
                 }
@@ -63,19 +64,16 @@ function DropdownMenu(props) {
     return (
         <div>
             <ul className="drop-menu">
+                <DropdownItemSelector key="selector" multi={props.multi} onClick={() => props.onCheck(-1, true)} />
                 {
-                    props.multi ?
-                        <li key="selector"> <button onClick={() => props.onCheck(-1, true)}> <em> Select All </em> </button> </li> : <li><em>None</em></li>
-                }
-                {
-                    props.options.map((option, index) => {
-                        if (props.multi) {
-                            return (<li key={option.id} onClick={() => {
-                                props.onCheck(option.id)
-                            }}> <input type="checkbox" checked={option.isChecked} readOnly={true}></input> {option.text} </li>)
-                        } else {
-                            return <li onClick={console.log(`Clicked ${option.id}`)} key={option.id}> {option.text} </li>
-                        }
+                    props.options.map((option) => {
+                        return <DropdownItem
+                            key={option.id}
+                            text={option.text}
+                            multi={props.multi}
+                            isChecked={option.isChecked}
+                            onClick={() => props.onCheck(option.id)}
+                        />
                     })
                 }
             </ul>
@@ -86,22 +84,64 @@ function DropdownMenu(props) {
 /**
  * JSX Component for a dropdown menu
  * @param {object} props
- * @param {boolean} isOpen check if menu status is open
+ * @param {boolean} props.isOpen check if menu status is open
  * @param {array} props.selectedOptions options that were selected
+ * @param {string} props.tag
  * @param {function} props.onClick function to be performed on click
  * @returns
  */
 function DropdownContext(props) {
     return (
-        <div className="drop-context"  onClick={() => {props.onClick()}}>
+        <div className="drop-context" onClick={() => { props.onClick() }}>
             <div className="drop-context-selection">
-                {Array.isArray(props.selectedOptions) ? props.selectedOptions.slice(0, 2).join(", ") + "..." : props.selectedOptions}
+                {
+                    props.selectedOptions.length > 0 ?
+                        Array.isArray(props.selectedOptions) ? props.selectedOptions.slice(0, 2).join(", ") + "..." : props.selectedOptions
+                        :
+                        <p className="drop-context-tag">{props.tag}</p>
+                }
             </div>
             <span className="drop-context-icon">{props.isOpen ? "\u25b2" : "\u25bc"}</span>
         </div>
     )
 }
 
+/**
+ * JSX Component for a dropdown menu
+ * @param {object} props
+ * @param {string} props.text that were selected
+ * @param {boolean} props.multi check if menu status is open
+ * @param {boolean} props.isChecked check if menu status is open
+ * @param {function} props.onClick function to be performed on click
+ * @returns
+ */
 function DropdownItem(props) {
+    return (
+        <li className="drop-menu-item" onClick={() => { props.onClick() }}>
+            {props.multi ? <input type="checkbox" checked={props.isChecked} readOnly={true}></input> : null}
+            {props.text}
+        </li>
+    )
+}
 
+/**
+ * JSX Component for a dropdown menu
+ * @param {object} props
+ * @param {boolean} props.multi Optional: enabled component for multiple selection
+ * @param {function} props.onClick Optional: callback function for multiple selection
+ * @returns
+ */
+function DropdownItemSelector(props) {
+    return (
+        <li className="drop-menu-item">
+            {
+                props.multi ?
+                    <button onClick={() => props.onClick()}>
+                        <em> Select All </em>
+                    </button>
+                    :
+                    <em>None</em>
+            }
+        </li>
+    )
 }
