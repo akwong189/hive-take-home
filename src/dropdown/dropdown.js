@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import "./dropdown.css"
+import useOutsideClick from "./hooks";
 
 /**
  * JSX Component for a dropdown menu
  * @param {object} props
  * @param {array} props.options options to display to be selected
- * @param {string} props.tag tag for the dropdown memu
+ * @param {string} props.tag Optional: tag for the dropdown memu
+ * @param {boolean} props.multiple Optional: enables selecting multiple options
  * @returns
  */
 export default function Dropdown(props) {
@@ -13,12 +15,25 @@ export default function Dropdown(props) {
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [listOptions, setListOptions] = useState([]);
 
+    const onSelectOptions = (itemId) => {
+        if (props.multiple) {
+            let updatedSelected = [...selectedOptions, itemId];
+            setSelectedOptions([...updatedSelected]);
+        } else {
+            let updatedOption = listOptions.map((option) => {
+                if (option.id == selectedOptions[0]) option.isChecked = false;
+            })
+            setListOptions([...updatedOption])
+            setSelectedOptions([itemId]);
+        }
+    }
+
     const onCheck = (itemId, all = false) => {
         let updatedMap = listOptions.map((option) => {
             if (all) {
             } else {
-                if (option.id == itemId) {
-                    setSelectedOptions(selectedOptions)
+                if (option.id === itemId) {
+                    onSelectOptions(itemId);
                     option.isChecked = !option.isChecked;
                 }
             }
@@ -29,8 +44,13 @@ export default function Dropdown(props) {
 
     const onMenuClick = () => {
         setOpenMenu(!openMenu);
-        return openMenu
     }
+
+    const outsideMenuClick = () => {
+        if (openMenu) setOpenMenu(!openMenu);
+    }
+
+    const ref = useOutsideClick(outsideMenuClick);
 
     useEffect(() => {
         let options = props.options.map((option, index) => {
@@ -38,14 +58,14 @@ export default function Dropdown(props) {
         })
 
         setListOptions(options);
-    }, { props })
+    }, [props.options] )
 
     return (
         <div style={props?.style}>
-            <div className="drop-down">
+            <div className="drop-down" ref={ref} >
                 <DropdownContext tag={props.tag} isOpen={openMenu} selectedOptions={selectedOptions} onClick={onMenuClick} />
                 {
-                    openMenu ? <DropdownMenu multi={true} options={listOptions} onCheck={onCheck} /> : null
+                    openMenu ? <DropdownMenu multi={props.multiple} options={listOptions} onCheck={onCheck} /> : null
                 }
             </div>
         </div>
@@ -116,8 +136,10 @@ function DropdownContext(props) {
  * @returns
  */
 function DropdownItem(props) {
+    let selected = props.isChecked ? "drop-menu-item selected" : "drop-menu-item"
+
     return (
-        <li className="drop-menu-item" onClick={() => { props.onClick() }}>
+        <li className={selected} onClick={() => { props.onClick() }}>
             {props.multi ? <input type="checkbox" checked={props.isChecked} readOnly={true}></input> : null}
             {props.text}
         </li>
@@ -136,12 +158,11 @@ function DropdownItemSelector(props) {
         <li className="drop-menu-item">
             {
                 props.multi ?
-                    <button onClick={() => props.onClick()}>
-                        <em> Select All </em>
-                    </button>
+                    <input type="checkbox"></input>
                     :
-                    <em>None</em>
+                    null
             }
+            <em>{props.multi ? "Select All" : "None"}</em>
         </li>
     )
 }
