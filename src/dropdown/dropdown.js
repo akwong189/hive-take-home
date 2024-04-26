@@ -7,10 +7,17 @@ const MAX_CHARS = 25;
 const MAX_TITLE_CHARS = 30;
 
 /**
+ * @typedef {Object} SelectOption
+ * @property {int} id id of option
+ * @property {string} text option text
+ * @property {boolean} isChecked if item is selected
+ */
+
+/**
  * JSX Component for a dropdown menu
  * @param {object} props
- * @param {array} props.options options to display to be selected
- * @param {string} props.desc Optional: desc for the dropdown memu
+ * @param {array<string>} props.options options to display to be selected
+ * @param {string} props.desc Optional: description for the dropdown memu
  * @param {boolean} props.multiple Optional: enables selecting multiple options
  * @returns
  */
@@ -20,14 +27,22 @@ export default function Dropdown(props) {
     const [listOptions, setListOptions] = useState([]);
     const [selectorState, setSelectorState] = useState(false);
 
+
+    /** Set option selection
+    * @param {int} itemId id of the item being clicked
+    * @returns
+    */
     const onCheck = (itemId) => {
         let result;
         if (props.multiple) {
+            // multiple selection action
             result = onCheckMultiple(itemId, selectedOptions, listOptions);
         } else {
+            // single selection action
             result = onCheckSingle(itemId, selectedOptions, listOptions);
         }
 
+        // update data retrieved from helper functions
         setListOptions(result.listOptions);
         setSelectedOptions(result.selectedOptions);
         if (result.selectorState !== undefined)
@@ -38,18 +53,20 @@ export default function Dropdown(props) {
         setOpenMenu(!openMenu);
     }
 
+    // When user clicks outside of component, close menu
     const outsideMenuClick = () => {
         if (openMenu) setOpenMenu(!openMenu);
     }
-
     const ref = useOutsideClick(outsideMenuClick);
 
     useEffect(() => {
+        // populate options as an object
         let options = props.options.map((option, index) => {
             return { text: option, id: index, isChecked: false }
         })
 
         if (!props.multiple) {
+            // single selection will always start as none
             setSelectorState(true);
         }
 
@@ -57,7 +74,7 @@ export default function Dropdown(props) {
     }, [props.options, props.multiple])
 
     return (
-        <div style={{...props?.style, maxWidth: "300px"}}>
+        <div style={{ ...props?.style, maxWidth: "300px" }}>
             <div className="drop-down" ref={ref} >
                 <DropdownContext
                     desc={props.desc}
@@ -86,9 +103,9 @@ export default function Dropdown(props) {
  * JSX Component for a dropdown menu
  * @param {object} props
  * @param {boolean} props.multi use multiple selection component instead of single selection
- * @param {array} props.options options to be displayed
- * @param {function} props.onCheck function to perform when object is clicked
- * @param {boolean} props.selectorHighlight
+ * @param {array<SelectOption>} props.options options to be displayed
+ * @param {function} props.onCheck function to be performed when object is clicked
+ * @param {boolean} props.selectorHighlight determines whether the selector button at the top of list is highlighted
  * @returns
  */
 function DropdownMenu(props) {
@@ -99,7 +116,7 @@ function DropdownMenu(props) {
                     higlighted={props.selectorHighlight}
                     key="selector"
                     multi={props.multi}
-                    onClick={() => props.onCheck(-1, true)}
+                    onClick={() => props.onCheck(-1)}
                 />
                 {
                     props.options.map((option) => {
@@ -121,10 +138,10 @@ function DropdownMenu(props) {
  * JSX Component for a dropdown "button" context information
  * @param {object} props
  * @param {boolean} props.isOpen check if menu status is open
- * @param {array} props.selectedOptions options that were selected
- * @param {array} props.listOptions options that can be selected
- * @param {string} props.desc
- * @param {function} props.onClick function to be performed on click
+ * @param {array<int>} props.selectedOptions options that were selected
+ * @param {array<SelectOption>} props.listOptions options that can be selected from
+ * @param {function} props.onClick callback function to what happens on clicking component
+ * @param {string} props.desc Optional: description of the dropdown menu
  * @returns
  */
 function DropdownContext(props) {
@@ -132,6 +149,7 @@ function DropdownContext(props) {
     let curr_length = 0
     let title = "";
 
+    // function to generate the title, with the max length of MAX_TITLE_CHARS characters
     for (let i of props.selectedOptions) {
         let option = props.listOptions[i].text
         if (option.length + curr_length + 2 < MAX_TITLE_CHARS) {
@@ -157,14 +175,16 @@ function DropdownContext(props) {
 /**
  * JSX Component for a dropdown list item
  * @param {object} props
- * @param {string} props.text that were selected
- * @param {boolean} props.multi check if menu status is open
- * @param {boolean} props.isChecked check if menu status is open
- * @param {function} props.onClick function to be performed on click
+ * @param {string} props.text option to be displayed as list item
+ * @param {boolean} props.multi determines if multiple choice or single choice, if multiple a checkbox is drawn
+ * @param {boolean} props.isChecked check if option is selected from dropdown
+ * @param {function} props.onClick callback function for action when item is clicked
  * @returns
  */
 function DropdownItem(props) {
     let selected = props.isChecked ? "drop-menu-item selected" : "drop-menu-item"
+
+    // shrink text if string length is too long to display
     let text = props.text.length > MAX_CHARS ? props.text.slice(0, MAX_CHARS) + "..." : props.text
 
     return (
@@ -178,9 +198,9 @@ function DropdownItem(props) {
 /**
  * JSX Component for a dropdown selector (select all/deselect all for multiple and none for single)
  * @param {object} props
- * @param {boolean} props.multi Optional: enabled component for multiple selection
- * @param {boolean} props.higlighted Optional: callback function for multiple selection
- * @param {function} props.onClick Optional: callback function for multiple selection
+ * @param {boolean} props.multi multiple choice or single choice, determines what selection option is displayed
+ * @param {boolean} props.higlighted determines if item selector is highlighted when None (single) or Select All (multiple) is selected
+ * @param {function} props.onClick callback function for action when selector is click
  * @returns
  */
 function DropdownItemSelector(props) {
