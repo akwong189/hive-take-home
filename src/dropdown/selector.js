@@ -1,15 +1,15 @@
 /**
  * @typedef {Object} UpdatedDropdownInfo
- * @property {array} selectedOptions updated list of options selected
- * @property {array} listOptions updated list of options (only updated checkbox state)
+ * @property {array<int>} selectedOptions updated list of options selected
+ * @property {array<import("./dropdown").SelectOption>} listOptions updated list of options (only updated checkbox state)
  * @property {boolean} selectorState updated state of highlighting selector item
  */
 
 /**
- * Selector action when `select all` / `deselect all` is clicked during multiple selection mode
- * @param {int} props.options options to display to be selected
- * @param {array} props.desc Optional: description for the dropdown memu
- * @param {boolean} add Optional: enables selecting multiple options
+ * Selector action when adding/removing item from selected options list
+ * @param {int} itemId id of item selected/deselected
+ * @param {array<int>} selectedOptions list of selected options to update
+ * @param {boolean} add Optional: determines if adding to selected options list or remove
  * @returns {UpdatedDropdownInfo}
  */
 const onSelectOptions = (itemId, selectedOptions, add = true) => {
@@ -21,9 +21,8 @@ const onSelectOptions = (itemId, selectedOptions, add = true) => {
 
 /**
  * Selector action when `select all` / `deselect all` is clicked during multiple selection mode
- * @param {array} props.options options to display to be selected
- * @param {string} props.desc Optional: description for the dropdown memu
- * @param {boolean} props.multiple Optional: enables selecting multiple options
+ * @param {array<int>} selectedOptions list of selected options
+ * @param {array<import("./dropdown").SelectOption>} listOptions list of available options
  * @returns {UpdatedDropdownInfo}
  */
 const onCheckSelector = (selectedOptions, listOptions) => {
@@ -51,8 +50,8 @@ const onCheckSelector = (selectedOptions, listOptions) => {
 /**
  * Selector action when an item is clicked during multiple selection mode
  * @param {int} itemId id of item to set as selected
- * @param {array} selectedOptions list of selected options
- * @param {array} listOptions list of available options
+ * @param {array<int>} selectedOptions list of selected options
+ * @param {array<import("./dropdown").SelectOption>} listOptions list of available options
  * @returns {UpdatedDropdownInfo}
  */
 const onCheckItem = (itemId, selectedOptions, listOptions) => {
@@ -71,8 +70,8 @@ const onCheckItem = (itemId, selectedOptions, listOptions) => {
 /**
  * Selector action for clicking on a list item during multiple selection mode 
  * @param {int} itemId id of item to set as selected
- * @param {array} selectedOptions list of selected options
- * @param {array} listOptions list of available options
+ * @param {array<int>} selectedOptions list of selected options
+ * @param {array<import("./dropdown").SelectOption>} listOptions list of available options
  * @returns {UpdatedDropdownInfo}
  */
 const onCheckMultiple = (itemId, selectedOptions, listOptions) => {
@@ -85,8 +84,8 @@ const onCheckMultiple = (itemId, selectedOptions, listOptions) => {
 /**
  * Selector action for clicking on a list item during single selection mode
  * @param {int} itemId id of item to set as selected
- * @param {array} selectedOptions list of selected options
- * @param {array} listOptions list of available options
+ * @param {array<int>} selectedOptions list of selected options
+ * @param {array<import("./dropdown").SelectOption>} listOptions list of available options
  * @returns {UpdatedDropdownInfo}
  */
 const onCheckSingle = (itemId, selectedOptions, listOptions) => {
