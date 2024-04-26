@@ -57,7 +57,7 @@ export default function Dropdown(props) {
     }, [props.options, props.multiple])
 
     return (
-        <div style={props?.style}>
+        <div style={{...props?.style, maxWidth: "300px"}}>
             <div className="drop-down" ref={ref} >
                 <DropdownContext
                     desc={props.desc}

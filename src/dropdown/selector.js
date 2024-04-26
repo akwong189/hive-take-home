@@ -27,9 +27,13 @@ const onCheckSelector = (selectedOptions, listOptions) => {
 
 const onCheckItem = (itemId, listOptions, selectedOptions) => {
     let option = listOptions[itemId];
+    let updatedSelectorState = false;
     option.isChecked = !option.isChecked;
-    selectedOptions = onSelectOptions(itemId, selectedOptions, option.isChecked);
-    return { listOptions: listOptions, selectedOptions: selectedOptions.selectedOptions }
+    if (option.isChecked) {
+        updatedSelectorState = selectedOptions.length + 1 >= listOptions.length ? true : false;
+    }
+    let updatedSelectedOptions = onSelectOptions(itemId, selectedOptions, option.isChecked);
+    return { listOptions: listOptions, selectedOptions: updatedSelectedOptions.selectedOptions, selectorState: updatedSelectorState }
 }
 
 const onCheckMultiple = (itemId, selectedOptions, listOptions) => {

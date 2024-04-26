@@ -1,12 +1,12 @@
 .drop-down {
-    position: absolute;
+    position: relative;
     width: 300px;
-
-    display:flex;
+    display: inline-block;
     flex-direction: column;
     gap: 0px;
     padding:0px; 
     margin:0px; 
+    overflow: inherit;
 }
 
 .drop-context {
@@ -38,8 +38,11 @@
 }
 
 .drop-menu {
+    position: absolute;
+    z-index: 1;
     list-style: none;
     height: 200px;
+    width: 300px;
     overflow: auto;
     padding: 0;
     margin: 0;
