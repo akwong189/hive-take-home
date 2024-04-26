@@ -15,24 +15,48 @@ function App() {
       <div style={{
         display: "flex",
         flexWrap: "wrap",
-        displayDirection: "column",
+        displayDirection: "row",
         gap: "40px",
         alignItems: "center",
         justifyContent: "center"
       }}>
-        <div>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center"
+        }}>
           <h1>{options.length} items (single)</h1>
           <Dropdown multiple={false} options={options} desc={"Random Desc"} />
         </div>
-        <div>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center"
+        }}>
           <h1>{options.length} items (multiple)</h1>
           <Dropdown multiple={true} options={options} desc={"Random Desc"} />
         </div>
-        <div>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center"
+        }}>
           <h1>{lotsOptions.length} items (single)</h1>
           <Dropdown multiple={false} options={lotsOptions} desc={"Long Random Desc"} />
         </div>
-        <div>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center"
+        }}>
           <h1>{lotsOptions.length} items (multiple)</h1>
           <Dropdown multiple={true} options={lotsOptions} desc={"Long Random Description that should be cut off"} />
         </div>
