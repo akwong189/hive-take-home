@@ -15,10 +15,12 @@ function App() {
       <div style={{
         display: "flex",
         flexWrap: "wrap",
+        flexDirection: "row",
         displayDirection: "row",
         gap: "40px",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        textAlign: "center"
       }}>
         <div style={{
           display: "flex",
@@ -47,7 +49,8 @@ function App() {
           justifyContent: "center",
           textAlign: "center"
         }}>
-          <h1>{lotsOptions.length} items (single)</h1>
+          <h1 style={{marginBottom: "5px"}}>{lotsOptions.length} items (single)</h1>
+          <h5 style={{padding: 0, margin: 0}}>Just keep scrolling, more options will appear</h5>
           <Dropdown multiple={false} options={lotsOptions} desc={"Long Random Desc"} />
         </div>
         <div style={{
@@ -57,7 +60,8 @@ function App() {
           justifyContent: "center",
           textAlign: "center"
         }}>
-          <h1>{lotsOptions.length} items (multiple)</h1>
+          <h1 style={{marginBottom: "5px"}}>{lotsOptions.length} items (multiple)</h1>
+          <h5 style={{padding: 0, margin: 0}}>Just keep scrolling, more options will appear</h5>
           <Dropdown multiple={true} options={lotsOptions} desc={"Long Random Description that should be cut off"} />
         </div>
       </div>
