@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
 import "./dropdown.css"
-import useOutsideClick from "./hooks";
+import { useInfiniteScroll, useOutsideClick } from "./hooks";
 import { onCheckMultiple, onCheckSingle } from "./selector";
 
-const MAX_CHARS = 25;
-const MAX_TITLE_CHARS = 30;
+const MAX_CHARS = 25; // Max character length in list
+const MAX_TITLE_CHARS = 30; // Max character length in context box
+const INIT_RENDER = 100; // Max items to render initally
+const RENDER_INTERVAL = 400; // Render n amount more each time when scrolling near end
 
 /**
  * @typedef {Object} SelectOption
@@ -26,7 +28,7 @@ export default function Dropdown(props) {
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [listOptions, setListOptions] = useState([]);
     const [selectorState, setSelectorState] = useState(false);
-
+    const [renderAmount, setRenderAmount] = useState(Math.min(props.options.length, INIT_RENDER))
 
     /** Set option selection
     * @param {int} itemId id of the item being clicked
@@ -53,11 +55,19 @@ export default function Dropdown(props) {
         setOpenMenu(!openMenu);
     }
 
-    // When user clicks outside of component, close menu
+    // When user clicks outside of component, close menu and reset render amount
     const outsideMenuClick = () => {
-        if (openMenu) setOpenMenu(!openMenu);
+        if (openMenu) {
+            setOpenMenu(!openMenu);
+            setRenderAmount(Math.min(props.options.length, INIT_RENDER));
+        }
     }
     const ref = useOutsideClick(outsideMenuClick);
+
+    // infinite scroll callback
+    const increaseScrollSize = () => {
+        setRenderAmount(Math.min(renderAmount + RENDER_INTERVAL, props.options.length));
+    }
 
     useEffect(() => {
         // populate options as an object
@@ -86,10 +96,12 @@ export default function Dropdown(props) {
                 {
                     openMenu ?
                         <DropdownMenu
+                            renderAmount={renderAmount}
                             selectorHighlight={selectorState}
                             multi={props.multiple}
                             options={listOptions}
                             onCheck={onCheck}
+                            onScrollEnd={increaseScrollSize}
                         />
                         :
                         null
@@ -102,16 +114,19 @@ export default function Dropdown(props) {
 /**
  * JSX Component for a dropdown menu
  * @param {object} props
- * @param {boolean} props.multi use multiple selection component instead of single selection
+ * @param {int} props.renderAmount renders only the specified amount of items
  * @param {array<SelectOption>} props.options options to be displayed
- * @param {function} props.onCheck function to be performed when object is clicked
  * @param {boolean} props.selectorHighlight determines whether the selector button at the top of list is highlighted
+ * @param {boolean} props.multi use multiple selection component instead of single selection
+ * @param {function} props.onCheck function to be performed when object is clicked
+ * @param {function} props.onScrollEnd function to be performed when scroll reaches end
  * @returns
  */
 function DropdownMenu(props) {
+    let ref = useInfiniteScroll(props.onScrollEnd);
     return (
         <div>
-            <ul className="drop-menu">
+            <ul className="drop-menu" ref={ref}>
                 <DropdownItemSelector
                     higlighted={props.selectorHighlight}
                     key="selector"
@@ -119,9 +134,10 @@ function DropdownMenu(props) {
                     onClick={() => props.onCheck(-1)}
                 />
                 {
-                    props.options.map((option) => {
+                    props.options.slice(0, props.renderAmount).map((option) => {
                         return <DropdownItem
                             key={option.id}
+                            id={option.id}
                             text={option.text}
                             multi={props.multi}
                             isChecked={option.isChecked}
@@ -181,6 +197,7 @@ function DropdownContext(props) {
 /**
  * JSX Component for a dropdown list item
  * @param {object} props
+ * @param {int} props.id option id of list item
  * @param {string} props.text option to be displayed as list item
  * @param {boolean} props.multi determines if multiple choice or single choice, if multiple a checkbox is drawn
  * @param {boolean} props.isChecked check if option is selected from dropdown
@@ -195,7 +212,7 @@ function DropdownItem(props) {
 
     return (
         <li className={selected} onClick={() => { props.onClick() }}>
-            {props.multi ? <input type="checkbox" checked={props.isChecked} readOnly={true}></input> : null}
+            {props.multi ? <input id={props.id} type="checkbox" checked={props.isChecked} readOnly={true}></input> : null}
             {text}
         </li>
     )
@@ -217,7 +234,7 @@ function DropdownItemSelector(props) {
         <li className={selected} onClick={() => props.onClick()}>
             {
                 props.multi ?
-                    <input type="checkbox" checked={props.higlighted} readOnly={true}></input>
+                    <input id={-1} type="checkbox" checked={props.higlighted} readOnly={true}></input>
                     :
                     null
             }
