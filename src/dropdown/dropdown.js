@@ -17,6 +17,7 @@ export default function Dropdown(props) {
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [listOptions, setListOptions] = useState([]);
     const [optionTitle, setOptionTitle] = useState("");
+    const [selectorState, setSelectorState] = useState(false);
 
     const optionNames = () => {
         let strs = []
@@ -53,17 +54,20 @@ export default function Dropdown(props) {
                 return option
             })
             setSelectedOptions([]);
+            setSelectorState(false);
         } else {
             updatedOptions = listOptions.map((option) => {
                 option.isChecked = true;
                 return option
             })
             setSelectedOptions([...Array(listOptions.length).keys()]);
+            setSelectorState(true);
         }
         setListOptions([...updatedOptions]);
     }
 
     const onCheckItem = (itemId) => {
+        // TODO: inefficient code
         let updatedOptions = listOptions.map((option) => {
             if (option.id === itemId) {
                 option.isChecked = !option.isChecked;
@@ -94,6 +98,9 @@ export default function Dropdown(props) {
         if (itemId !== - 1) {
             listOptions[itemId].isChecked = true;
             newSelectedOption.push(itemId);
+            setSelectorState(false);
+        } else {
+            setSelectorState(true);
         }
         setListOptions([...listOptions]);
         setSelectedOptions(newSelectedOption);
@@ -122,6 +129,10 @@ export default function Dropdown(props) {
             return { text: option, id: index, isChecked: false }
         })
 
+        if (!props.multiple) {
+            setSelectorState(true);
+        }
+
         setListOptions(options);
     }, [props.options])
 
@@ -130,7 +141,7 @@ export default function Dropdown(props) {
             <div className="drop-down" ref={ref} >
                 <DropdownContext tag={props.tag} isOpen={openMenu} selectedOptions={selectedOptions} onClick={onMenuClick} />
                 {
-                    openMenu ? <DropdownMenu multi={props.multiple} options={listOptions} onCheck={onCheck} /> : null
+                    openMenu ? <DropdownMenu selectorHighlight={selectorState} multi={props.multiple} options={listOptions} onCheck={onCheck} /> : null
                 }
             </div>
             {optionTitle}
@@ -144,13 +155,14 @@ export default function Dropdown(props) {
  * @param {boolean} props.multi use multiple selection component instead of single selection
  * @param {array} props.options options to be displayed
  * @param {function} props.onCheck function to perform when object is clicked
+ * @param {boolean} props.selectorHighlight
  * @returns
  */
 function DropdownMenu(props) {
     return (
         <div>
             <ul className="drop-menu">
-                <DropdownItemSelector key="selector" multi={props.multi} onClick={() => props.onCheck(-1, true)} />
+                <DropdownItemSelector higlighted={props.selectorHighlight} key="selector" multi={props.multi} onClick={() => props.onCheck(-1, true)} />
                 {
                     props.options.map((option) => {
                         return <DropdownItem
@@ -222,16 +234,17 @@ function DropdownItem(props) {
  */
 function DropdownItemSelector(props) {
     let selected = props.higlighted ? "drop-menu-item selected" : "drop-menu-item"
+    let selectTitle = props.higlighted ? "Deselect All" : "Select All"
 
     return (
         <li className={selected} onClick={() => props.onClick()}>
             {
                 props.multi ?
-                    <input type="checkbox"></input>
+                    <input type="checkbox" checked={props.higlighted} readOnly={true}></input>
                     :
                     null
             }
-            <em>{props.multi ? "Select All" : "None"}</em>
+            <em>{props.multi ? selectTitle : "None"}</em>
         </li>
     )
 }
