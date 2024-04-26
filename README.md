@@ -31,19 +31,27 @@ $ npm start
 ![](img/demo-overlap.png)
 
 ### Single Selection Mode with 4 items
-![](img/single-none.png)
-![](img/single-selected2.png)
+|                                       |       |
+|:-------------------------------------:|:---:|
+| <img src="img/single-none.png" height=300 width = 300 /> | <img src="img/single-selected2.png" height=300 width=300 /> |
+
+
+
 
 ### Multiple Selection Mode with 4 items
-![](img/multiple-none.png)
-![](img/multiple-selected-3.png)
-![](img/multiple-selected-all.png)
+|                                       |       | |
+|:-------------------------------------:|:---:|:---:|
+| <img src="img/multiple-none.png" height=300 width = 300 /> | <img src="img/multiple-selected-3.png" height=300 width = 300 /> | <img src="img/multiple-selected-all.png" height=300 width = 300 /> |
+
+
+
 
 ### Single Selection Mode with 10001 items
-![](img/single-long-none.png)
-![](img/single-long-select562.png)
-![](img/single-long-scroll.png)
+|                                       |       | |
+|:-------------------------------------:|:---:|:---:|
+| <img src="img/single-long-none.png" height=300 width = 300 /> | <img src="img/single-long-scroll.png" height=300 width = 300 /> | <img src="img/single-long-select562.png" height=300 width = 300 /> |
 
 ### Multiple Selection Mode with 10001 items
-![](img/multiple-long-none.png)
-![](img/multiple-long-select-all-3.png)
+|                                       |       |
+|:-------------------------------------:|:---:|
+| <img src="img/multiple-long-none.png" height=300 width = 300 /> | <img src="img/multiple-long-select-all-3.png" height=300 width = 300 />
