@@ -31,7 +31,7 @@ const onCheckSelector = (selectedOptions, listOptions) => {
         // clear all options (deselect all) when all options are selected
         updatedListOptions = listOptions.map((option) => {
             option.isChecked = false;
-            return option
+            return option;
         })
         updatedSelectedOptions = [];
         updatedSelectorState = false;

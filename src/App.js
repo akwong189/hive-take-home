@@ -6,9 +6,9 @@ function App() {
   const lotsOptions = [];
 
   for (let i = 0; i < 10000; i++) {
-    lotsOptions.push(`test${i}`)
+    lotsOptions.push(`test${i}`);
   }
-  lotsOptions.push(`this is a long test of a long string to make sure that the string will be cut off`)
+  lotsOptions.push(`this is a long test of a long string to make sure that the string will be cut off`);
 
   return (
     <div className="App">

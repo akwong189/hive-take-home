@@ -28,7 +28,7 @@ export default function Dropdown(props) {
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [listOptions, setListOptions] = useState([]);
     const [selectorState, setSelectorState] = useState(false);
-    const [renderAmount, setRenderAmount] = useState(Math.min(props.options.length, INIT_RENDER))
+    const [renderAmount, setRenderAmount] = useState(Math.min(props.options.length, INIT_RENDER));
 
     /** Set option selection
     * @param {int} itemId id of the item being clicked
@@ -49,11 +49,11 @@ export default function Dropdown(props) {
         setSelectedOptions(result.selectedOptions);
         if (result.selectorState !== undefined)
             setSelectorState(result.selectorState);
-    }
+    };
 
     const onMenuClick = () => {
         setOpenMenu(!openMenu);
-    }
+    };
 
     // When user clicks outside of component, close menu and reset render amount
     const outsideMenuClick = () => {
@@ -61,7 +61,7 @@ export default function Dropdown(props) {
             setOpenMenu(!openMenu);
             setRenderAmount(Math.min(props.options.length, INIT_RENDER));
         }
-    }
+    };
     const ref = useOutsideClick(outsideMenuClick);
 
     // infinite scroll callback
@@ -72,7 +72,7 @@ export default function Dropdown(props) {
     useEffect(() => {
         // populate options as an object
         let options = props.options.map((option, index) => {
-            return { text: option, id: index, isChecked: false }
+            return { text: option, id: index, isChecked: false };
         })
 
         if (!props.multiple) {
@@ -81,7 +81,7 @@ export default function Dropdown(props) {
         }
 
         setListOptions(options);
-    }, [props.options, props.multiple])
+    }, [props.options, props.multiple]);
 
     return (
         <div style={{ ...props?.style, maxWidth: "300px" }}>
@@ -108,7 +108,7 @@ export default function Dropdown(props) {
                 }
             </div>
         </div>
-    )
+    );
 }
 
 /**
@@ -147,7 +147,7 @@ function DropdownMenu(props) {
                 }
             </ul>
         </div>
-    )
+    );
 }
 
 /**
@@ -161,25 +161,25 @@ function DropdownMenu(props) {
  * @returns
  */
 function DropdownContext(props) {
-    let strs = []
-    let curr_length = 0
+    let strs = [];
+    let curr_length = 0;
     let title = "";
     let desc = props.desc;
 
-    // function to generate the title, with the max length of MAX_TITLE_CHARS characters
+    // generate the title with the max length of MAX_TITLE_CHARS characters
     for (let i of props.selectedOptions) {
-        let option = props.listOptions[i].text
+        let option = props.listOptions[i].text;
         if (option.length + curr_length + 2 < MAX_TITLE_CHARS) {
-            curr_length += option.length + 2
-            strs.push(option)
+            curr_length += option.length + 2;
+            strs.push(option);
         } else {
             strs.push(option.slice(0, MAX_TITLE_CHARS - curr_length) + "...");
             break;
         }
     }
-    title = strs.join(", ")
+    title = strs.join(", ");
 
-    // make sure the given desc fits into component
+    // make sure the given desc fits into component based on MAX_TITLE_CHARS
     if (desc.length > MAX_TITLE_CHARS) {
         desc = desc.slice(0, MAX_TITLE_CHARS) + "...";
     }
@@ -191,7 +191,7 @@ function DropdownContext(props) {
             </div>
             <span className="drop-context-icon">{props.isOpen ? "\u25b2" : "\u25bc"}</span>
         </div>
-    )
+    );
 }
 
 /**
@@ -205,17 +205,17 @@ function DropdownContext(props) {
  * @returns
  */
 function DropdownItem(props) {
-    let selected = props.isChecked ? "drop-menu-item selected" : "drop-menu-item"
+    let selected = props.isChecked ? "drop-menu-item selected" : "drop-menu-item";
 
     // shrink text if string length is too long to display
-    let text = props.text.length > MAX_CHARS ? props.text.slice(0, MAX_CHARS) + "..." : props.text
+    let text = props.text.length > MAX_CHARS ? props.text.slice(0, MAX_CHARS) + "..." : props.text;
 
     return (
         <li className={selected} onClick={() => { props.onClick() }}>
             {props.multi ? <input id={props.id} type="checkbox" checked={props.isChecked} readOnly={true}></input> : null}
             {text}
         </li>
-    )
+    );
 }
 
 /**
@@ -227,8 +227,8 @@ function DropdownItem(props) {
  * @returns
  */
 function DropdownItemSelector(props) {
-    let selected = props.higlighted ? "drop-menu-item selected" : "drop-menu-item"
-    let selectTitle = props.higlighted ? "Deselect All" : "Select All"
+    let selected = props.higlighted ? "drop-menu-item selected" : "drop-menu-item";
+    let selectTitle = props.higlighted ? "Deselect All" : "Select All";
 
     return (
         <li className={selected} onClick={() => props.onClick()}>
@@ -240,5 +240,5 @@ function DropdownItemSelector(props) {
             }
             <em>{props.multi ? selectTitle : "None"}</em>
         </li>
-    )
+    );
 }
