@@ -67,15 +67,10 @@ export default function Dropdown(props) {
     }
 
     const onCheckItem = (itemId) => {
-        // TODO: inefficient code
-        let updatedOptions = listOptions.map((option) => {
-            if (option.id === itemId) {
-                option.isChecked = !option.isChecked;
-                onSelectOptions(itemId, option.isChecked);
-            }
-            return option;
-        });
-        setListOptions([...updatedOptions]);
+        let option = listOptions[itemId];
+        option.isChecked = !option.isChecked;
+        onSelectOptions(itemId, option.isChecked);
+        setListOptions([...listOptions]);
     }
 
     const onCheckMultiple = (itemId) => {
@@ -139,9 +134,22 @@ export default function Dropdown(props) {
     return (
         <div style={props?.style}>
             <div className="drop-down" ref={ref} >
-                <DropdownContext tag={props.tag} isOpen={openMenu} selectedOptions={selectedOptions} onClick={onMenuClick} />
+                <DropdownContext
+                    tag={props.tag}
+                    isOpen={openMenu}
+                    selectedOptions={selectedOptions}
+                    onClick={onMenuClick}
+                />
                 {
-                    openMenu ? <DropdownMenu selectorHighlight={selectorState} multi={props.multiple} options={listOptions} onCheck={onCheck} /> : null
+                    openMenu ?
+                        <DropdownMenu
+                            selectorHighlight={selectorState}
+                            multi={props.multiple}
+                            options={listOptions}
+                            onCheck={onCheck}
+                        />
+                        :
+                        null
                 }
             </div>
             {optionTitle}
@@ -162,7 +170,12 @@ function DropdownMenu(props) {
     return (
         <div>
             <ul className="drop-menu">
-                <DropdownItemSelector higlighted={props.selectorHighlight} key="selector" multi={props.multi} onClick={() => props.onCheck(-1, true)} />
+                <DropdownItemSelector
+                    higlighted={props.selectorHighlight}
+                    key="selector"
+                    multi={props.multi}
+                    onClick={() => props.onCheck(-1, true)}
+                />
                 {
                     props.options.map((option) => {
                         return <DropdownItem
@@ -180,7 +193,7 @@ function DropdownMenu(props) {
 }
 
 /**
- * JSX Component for a dropdown menu
+ * JSX Component for a dropdown "button" context information
  * @param {object} props
  * @param {boolean} props.isOpen check if menu status is open
  * @param {array} props.selectedOptions options that were selected
@@ -205,7 +218,7 @@ function DropdownContext(props) {
 }
 
 /**
- * JSX Component for a dropdown menu
+ * JSX Component for a dropdown list item
  * @param {object} props
  * @param {string} props.text that were selected
  * @param {boolean} props.multi check if menu status is open
@@ -225,7 +238,7 @@ function DropdownItem(props) {
 }
 
 /**
- * JSX Component for a dropdown menu
+ * JSX Component for a dropdown selector (select all/deselect all for multiple and none for single)
  * @param {object} props
  * @param {boolean} props.multi Optional: enabled component for multiple selection
  * @param {boolean} props.higlighted Optional: callback function for multiple selection
