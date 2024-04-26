@@ -14,15 +14,28 @@ function App() {
     <div className="App">
       <div style={{
         display: "flex",
+        flexWrap: "wrap",
         displayDirection: "column",
         gap: "40px",
         alignItems: "center",
         justifyContent: "center"
       }}>
-        <Dropdown multiple={false} options={options} desc={"Random Desc"} />
-        <Dropdown multiple={true} options={options} desc={"Random Desc"} />
-        <Dropdown multiple={false} options={lotsOptions} desc={"Long Random Desc"} />
-        <Dropdown multiple={true} options={lotsOptions} desc={"Long Random Description that should be cut off"} />
+        <div>
+          <h1>{options.length} items (single)</h1>
+          <Dropdown multiple={false} options={options} desc={"Random Desc"} />
+        </div>
+        <div>
+          <h1>{options.length} items (multiple)</h1>
+          <Dropdown multiple={true} options={options} desc={"Random Desc"} />
+        </div>
+        <div>
+          <h1>{lotsOptions.length} items (single)</h1>
+          <Dropdown multiple={false} options={lotsOptions} desc={"Long Random Desc"} />
+        </div>
+        <div>
+          <h1>{lotsOptions.length} items (multiple)</h1>
+          <Dropdown multiple={true} options={lotsOptions} desc={"Long Random Description that should be cut off"} />
+        </div>
       </div>
       <img src={logo} alt="test logo"></img>
     </div>
