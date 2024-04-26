@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import "./dropdown.css"
 import useOutsideClick from "./hooks";
+import { onCheckMultiple, onCheckSingle } from "./selector";
 
 const MAX_CHARS = 25;
 const MAX_TITLE_CHARS = 30;
@@ -9,7 +10,7 @@ const MAX_TITLE_CHARS = 30;
  * JSX Component for a dropdown menu
  * @param {object} props
  * @param {array} props.options options to display to be selected
- * @param {string} props.tag Optional: tag for the dropdown memu
+ * @param {string} props.desc Optional: desc for the dropdown memu
  * @param {boolean} props.multiple Optional: enables selecting multiple options
  * @returns
  */
@@ -19,74 +20,18 @@ export default function Dropdown(props) {
     const [listOptions, setListOptions] = useState([]);
     const [selectorState, setSelectorState] = useState(false);
 
-    const onSelectOptions = (itemId, add = true) => {
-        let updatedSelected;
-        updatedSelected = add ?
-            [...selectedOptions, itemId] : updatedSelected = selectedOptions.filter((item) => item !== itemId);
-        setSelectedOptions([...updatedSelected]);
-    }
-
-    const onCheckSelector = () => {
-        let updatedOptions;
-        if (selectedOptions.length >= listOptions.length) {
-            updatedOptions = listOptions.map((option) => {
-                option.isChecked = false;
-                return option
-            })
-            setSelectedOptions([]);
-            setSelectorState(false);
-        } else {
-            updatedOptions = listOptions.map((option) => {
-                option.isChecked = true;
-                return option
-            })
-            setSelectedOptions([...Array(listOptions.length).keys()]);
-            setSelectorState(true);
-        }
-        setListOptions([...updatedOptions]);
-    }
-
-    const onCheckItem = (itemId) => {
-        let option = listOptions[itemId];
-        option.isChecked = !option.isChecked;
-        onSelectOptions(itemId, option.isChecked);
-        setListOptions([...listOptions]);
-    }
-
-    const onCheckMultiple = (itemId) => {
-        if (itemId === -1) {
-            onCheckSelector();
-        } else {
-            onCheckItem(itemId);
-        }
-    }
-
-    const onCheckSingle = (itemId) => {
-        let newSelectedOption = [];
-        let index;
-
-        if (selectedOptions.length > 0) {
-            index = selectedOptions[0];
-            listOptions[index].isChecked = false;
-        }
-
-        if (itemId !== - 1) {
-            listOptions[itemId].isChecked = true;
-            newSelectedOption.push(itemId);
-            setSelectorState(false);
-        } else {
-            setSelectorState(true);
-        }
-        setListOptions([...listOptions]);
-        setSelectedOptions(newSelectedOption);
-    }
-
     const onCheck = (itemId) => {
+        let result;
         if (props.multiple) {
-            onCheckMultiple(itemId);
+            result = onCheckMultiple(itemId, selectedOptions, listOptions);
         } else {
-            onCheckSingle(itemId);
+            result = onCheckSingle(itemId, selectedOptions, listOptions);
         }
+
+        setListOptions(result.listOptions);
+        setSelectedOptions(result.selectedOptions);
+        if (result.selectorState !== undefined)
+            setSelectorState(result.selectorState);
     }
 
     const onMenuClick = () => {
@@ -109,13 +54,13 @@ export default function Dropdown(props) {
         }
 
         setListOptions(options);
-    }, [props.options])
+    }, [props.options, props.multiple])
 
     return (
         <div style={props?.style}>
             <div className="drop-down" ref={ref} >
                 <DropdownContext
-                    tag={props.tag}
+                    desc={props.desc}
                     isOpen={openMenu}
                     selectedOptions={selectedOptions}
                     listOptions={listOptions}
@@ -178,7 +123,7 @@ function DropdownMenu(props) {
  * @param {boolean} props.isOpen check if menu status is open
  * @param {array} props.selectedOptions options that were selected
  * @param {array} props.listOptions options that can be selected
- * @param {string} props.tag
+ * @param {string} props.desc
  * @param {function} props.onClick function to be performed on click
  * @returns
  */
@@ -202,7 +147,7 @@ function DropdownContext(props) {
     return (
         <div className="drop-context" onClick={() => { props.onClick() }}>
             <div className="drop-context-selection">
-                {props.selectedOptions.length > 0 ? title : <p className="drop-context-tag">{props.tag}</p>}
+                {props.selectedOptions.length > 0 ? title : <p className="drop-context-desc">{props.desc}</p>}
             </div>
             <span className="drop-context-icon">{props.isOpen ? "\u25b2" : "\u25bc"}</span>
         </div>

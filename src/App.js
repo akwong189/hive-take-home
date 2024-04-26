@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div className="App">
-      <Dropdown multiple={true} options={options} tag={"Random Desc"} style={{
+      <Dropdown multiple={true} options={options} desc={"Random Desc"} style={{
         display: 'flex',
         justifyContent: 'center',
         margin: "10px"
