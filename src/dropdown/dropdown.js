@@ -37,42 +37,30 @@ export default function Dropdown(props) {
 
     const onSelectOptions = (itemId, add = true) => {
         let updatedSelected;
-        if (props.multiple) {
-            if (add) {
-                updatedSelected = [...selectedOptions, itemId];
-            } else {
-                updatedSelected = selectedOptions.filter((item) => item !== itemId);
-            }
+        if (add) {
+            updatedSelected = [...selectedOptions, itemId];
         } else {
-            if (itemId === -1) {
-                updatedSelected = []
-            } else {
-                updatedSelected = [itemId]
-            }
+            updatedSelected = selectedOptions.filter((item) => item !== itemId);
         }
         setSelectedOptions([...updatedSelected]);
     }
 
-    const onCheckSelector = (itemId) => {
+    const onCheckSelector = () => {
         let updatedOptions;
-        if (props.multiple) {
-            if (selectedOptions.length >= listOptions.length) {
-                updatedOptions = listOptions.map((option) => {
-                    option.isChecked = false;
-                    return option
-                })
-                setSelectedOptions([]);
-            } else {
-                updatedOptions = listOptions.map((option) => {
-                    option.isChecked = true;
-                    return option
-                })
-                setSelectedOptions([...Array(listOptions.length).keys()]);
-            }
-            setListOptions([...updatedOptions]);
+        if (selectedOptions.length >= listOptions.length) {
+            updatedOptions = listOptions.map((option) => {
+                option.isChecked = false;
+                return option
+            })
+            setSelectedOptions([]);
         } else {
-            onSelectOptions(itemId);
+            updatedOptions = listOptions.map((option) => {
+                option.isChecked = true;
+                return option
+            })
+            setSelectedOptions([...Array(listOptions.length).keys()]);
         }
+        setListOptions([...updatedOptions]);
     }
 
     const onCheckItem = (itemId) => {
@@ -86,11 +74,36 @@ export default function Dropdown(props) {
         setListOptions([...updatedOptions]);
     }
 
-    const onCheck = (itemId) => {
+    const onCheckMultiple = (itemId) => {
         if (itemId === -1) {
-            onCheckSelector(itemId);
+            onCheckSelector();
         } else {
             onCheckItem(itemId);
+        }
+    }
+
+    const onCheckSingle = (itemId) => {
+        let newSelectedOption = [];
+        let index;
+
+        if (selectedOptions.length > 0) {
+            index = selectedOptions[0];
+            listOptions[index].isChecked = false;
+        }
+
+        if (itemId !== - 1) {
+            listOptions[itemId].isChecked = true;
+            newSelectedOption.push(itemId);
+        }
+        setListOptions([...listOptions]);
+        setSelectedOptions(newSelectedOption);
+    }
+
+    const onCheck = (itemId) => {
+        if (props.multiple) {
+            onCheckMultiple(itemId);
+        } else {
+            onCheckSingle(itemId);
         }
     }
 

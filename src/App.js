@@ -5,7 +5,7 @@ function App() {
   // const options = ["test1", "test2", "test3", "test4"];
   const options = [];
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 100; i++) {
     options.push(`test${i}`)
   }
 
