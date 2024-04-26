@@ -2,13 +2,13 @@ import logo from './logo.svg';
 import Dropdown from './dropdown/dropdown';
 
 function App() {
-  // const options = ["test1", "test2", "test3", "test4"];
-  const options = [];
+  const options = ["test1", "test2", "test3", "test4"];
+  const lotsOptions = [];
 
-  for (let i = 0; i < 100; i++) {
-    options.push(`test${i}`)
+  for (let i = 0; i < 10000; i++) {
+    lotsOptions.push(`test${i}`)
   }
-  options.push(`jafklhiuh3eklglkjbadlhaioweasdaisghdjuakgwyuiegol`)
+  lotsOptions.push(`this is a long test of a long string to make sure that the string will be cut off`)
 
   return (
     <div className="App">
@@ -21,6 +21,8 @@ function App() {
       }}>
         <Dropdown multiple={false} options={options} desc={"Random Desc"} />
         <Dropdown multiple={true} options={options} desc={"Random Desc"} />
+        <Dropdown multiple={false} options={lotsOptions} desc={"Long Random Desc"} />
+        <Dropdown multiple={true} options={lotsOptions} desc={"Long Random Description that should be cut off"} />
       </div>
       <img src={logo} alt="test logo"></img>
     </div>

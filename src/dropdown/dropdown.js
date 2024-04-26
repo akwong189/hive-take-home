@@ -148,6 +148,7 @@ function DropdownContext(props) {
     let strs = []
     let curr_length = 0
     let title = "";
+    let desc = props.desc;
 
     // function to generate the title, with the max length of MAX_TITLE_CHARS characters
     for (let i of props.selectedOptions) {
@@ -162,10 +163,15 @@ function DropdownContext(props) {
     }
     title = strs.join(", ")
 
+    // make sure the given desc fits into component
+    if (desc.length > MAX_TITLE_CHARS) {
+        desc = desc.slice(0, MAX_TITLE_CHARS) + "...";
+    }
+
     return (
         <div className="drop-context" onClick={() => { props.onClick() }}>
             <div className="drop-context-selection">
-                {props.selectedOptions.length > 0 ? title : <p className="drop-context-desc">{props.desc}</p>}
+                {props.selectedOptions.length > 0 ? title : <p className="drop-context-desc">{desc}</p>}
             </div>
             <span className="drop-context-icon">{props.isOpen ? "\u25b2" : "\u25bc"}</span>
         </div>
