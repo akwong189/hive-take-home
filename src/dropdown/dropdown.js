@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import "./dropdown.css"
 import useOutsideClick from "./hooks";
 
-const MAX_CHARS = 20;
+const MAX_CHARS = 25;
+const MAX_TITLE_CHARS = 30;
 
 /**
  * JSX Component for a dropdown menu
@@ -16,33 +17,12 @@ export default function Dropdown(props) {
     const [openMenu, setOpenMenu] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [listOptions, setListOptions] = useState([]);
-    const [optionTitle, setOptionTitle] = useState("");
     const [selectorState, setSelectorState] = useState(false);
-
-    const optionNames = () => {
-        let strs = []
-        let curr_length = 0
-
-        console.log(selectedOptions);
-        for (let i of selectedOptions) {
-            let option = listOptions[i].text
-            console.log(option, option.length + curr_length + 2)
-            if (option.length + curr_length + 2 < MAX_CHARS) {
-                curr_length += option.length + 2
-                strs.push(option)
-            }
-        }
-        console.log(strs)
-        return strs.join(", ")
-    }
 
     const onSelectOptions = (itemId, add = true) => {
         let updatedSelected;
-        if (add) {
-            updatedSelected = [...selectedOptions, itemId];
-        } else {
-            updatedSelected = selectedOptions.filter((item) => item !== itemId);
-        }
+        updatedSelected = add ?
+            [...selectedOptions, itemId] : updatedSelected = selectedOptions.filter((item) => item !== itemId);
         setSelectedOptions([...updatedSelected]);
     }
 
@@ -138,6 +118,7 @@ export default function Dropdown(props) {
                     tag={props.tag}
                     isOpen={openMenu}
                     selectedOptions={selectedOptions}
+                    listOptions={listOptions}
                     onClick={onMenuClick}
                 />
                 {
@@ -152,7 +133,6 @@ export default function Dropdown(props) {
                         null
                 }
             </div>
-            {optionTitle}
         </div>
     )
 }
@@ -197,20 +177,32 @@ function DropdownMenu(props) {
  * @param {object} props
  * @param {boolean} props.isOpen check if menu status is open
  * @param {array} props.selectedOptions options that were selected
+ * @param {array} props.listOptions options that can be selected
  * @param {string} props.tag
  * @param {function} props.onClick function to be performed on click
  * @returns
  */
 function DropdownContext(props) {
+    let strs = []
+    let curr_length = 0
+    let title = "";
+
+    for (let i of props.selectedOptions) {
+        let option = props.listOptions[i].text
+        if (option.length + curr_length + 2 < MAX_TITLE_CHARS) {
+            curr_length += option.length + 2
+            strs.push(option)
+        } else {
+            strs.push(option.slice(0, MAX_TITLE_CHARS - curr_length) + "...");
+            break;
+        }
+    }
+    title = strs.join(", ")
+
     return (
         <div className="drop-context" onClick={() => { props.onClick() }}>
             <div className="drop-context-selection">
-                {
-                    props.selectedOptions.length > 0 ?
-                        Array.isArray(props.selectedOptions) ? props.selectedOptions.slice(0, 10).join(", ") + "..." : props.selectedOptions
-                        :
-                        <p className="drop-context-tag">{props.tag}</p>
-                }
+                {props.selectedOptions.length > 0 ? title : <p className="drop-context-tag">{props.tag}</p>}
             </div>
             <span className="drop-context-icon">{props.isOpen ? "\u25b2" : "\u25bc"}</span>
         </div>
@@ -228,11 +220,12 @@ function DropdownContext(props) {
  */
 function DropdownItem(props) {
     let selected = props.isChecked ? "drop-menu-item selected" : "drop-menu-item"
+    let text = props.text.length > MAX_CHARS ? props.text.slice(0, MAX_CHARS) + "..." : props.text
 
     return (
         <li className={selected} onClick={() => { props.onClick() }}>
             {props.multi ? <input type="checkbox" checked={props.isChecked} readOnly={true}></input> : null}
-            {props.text}
+            {text}
         </li>
     )
 }
